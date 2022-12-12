@@ -7,7 +7,7 @@ producer = Producer(configuration)
 print('Kafka Producer has been initiated...')
 
 def main():
-    #this data took for example
+    #this data was taken for an example
     data={
             "schema_ver": "0.1",
             "timestamp": "2022-12-09T12:35:12.8223086+03:00",
