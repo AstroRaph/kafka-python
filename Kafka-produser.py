@@ -1,4 +1,9 @@
 import json
+import random
+import uuid
+from datetime import datetime
+import pytz
+
 from confluent_kafka import Producer
 
 configuration = {'bootstrap.servers':'localhost:9092'}
@@ -6,21 +11,25 @@ configuration = {'bootstrap.servers':'localhost:9092'}
 producer = Producer(configuration)
 print('Kafka Producer has been initiated...')
 
+
 def main():
-    #this data was taken for an example
-    data={
+    batch_id = uuid.uuid1()
+    dt = datetime.now(pytz.timezone('Europe/Kyiv'))
+    n = random.randint(100, 1000)
+    m = random.randint(0, 100)
+    data = {
             "schema_ver": "0.1",
-            "timestamp": "2022-12-09T12:35:12.8223086+03:00",
-            "batch_id": "f466c39f-009a-4fb1-b962-bd7ffb20a113",
-            "batch_size": 805,
-            "sequence_num": 42,
+            "timestamp": str(dt),
+            "batch_id": str(batch_id),
+            "batch_size": n,
+            "sequence_num": m,
             "source_name": "TIS_PORTAL",
             "message_type": "upsert",
             "payload": {
                 "entity_type": "Unit",
                 "company_name": None,
                 "attributes": {
-                    "unit_id": 59,
+                    "unit_id": m*2-1,
                     "parent_unit_id": 2,
                     "name": "TowerST",
                     "ordern": 455,
@@ -29,10 +38,11 @@ def main():
                 }
             }
         }
-    msg=json.dumps(data)
+    msg = json.dumps(data)
     producer.poll(1)
     producer.produce('tower', msg.encode('utf-8'))
     producer.flush()
+
 
 if __name__ == '__main__':
     main()
